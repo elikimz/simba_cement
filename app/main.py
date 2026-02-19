@@ -1,6 +1,7 @@
 from sched import scheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routers import users, settings,categories,products,cart,order,address
 
 app = FastAPI()
 
@@ -18,8 +19,13 @@ app.add_middleware(
 # ----------------------------
 # Include Routers
 # ----------------------------
-# app.include_router(auth_router.router)
-
+app.include_router(users.router)
+app.include_router(settings.router)
+app.include_router(categories.router)
+app.include_router(products.router)
+app.include_router(cart.router)
+app.include_router(order.router)
+app.include_router(address.router)
 
 
 

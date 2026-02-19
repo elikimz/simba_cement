@@ -33,7 +33,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Import your models and set target metadata
-from models import (
+from app.models import (
     Base,
     User,
     Category,

@@ -83,47 +83,6 @@ class SellerNestedSchema(BaseModel):
 # # PRODUCT SCHEMAS
 # # =========================================================
 
-# class ProductCreateSchema(BaseModel):
-#     name: str = Field(..., examples=["Cement 50kg"])
-#     description: Optional[str] = Field(None, examples=["High quality cement"])
-#     price: float = Field(..., examples=[450.0])
-#     original_price: Optional[float] = Field(None, examples=[500.0])
-#     discount_percentage: Optional[float] = Field(0.0, examples=[10.0])
-#     stock: int = Field(..., examples=[100])
-#     image_url: Optional[str] = Field(None, examples=["http://example.com/image.png"])
-#     category_id: Optional[int] = Field(None, examples=[1])
-
-
-# class ProductUpdateSchema(BaseModel):
-#     name: Optional[str] = Field(None, examples=["Cement 50kg"])
-#     description: Optional[str] = Field(None, examples=["High quality cement"])
-#     price: Optional[float] = Field(None, examples=[450.0])
-#     original_price: Optional[float] = Field(None, examples=[500.0])
-#     discount_percentage: Optional[float] = Field(None, examples=[10.0])
-#     stock: Optional[int] = Field(None, examples=[100])
-#     image_url: Optional[str] = Field(None, examples=["http://example.com/image.png"])
-#     category_id: Optional[int] = Field(None, examples=[1])
-
-
-# class ProductResponseSchema(BaseModel):
-#     id: int
-#     name: str
-#     description: Optional[str] = None
-#     price: float
-#     original_price: Optional[float] = None
-#     discount_percentage: float
-#     stock: int
-#     image_url: Optional[str] = None
-
-#     seller: SellerNestedSchema
-#     category: Optional[CategoryNestedSchema] = None
-
-#     created_at: datetime
-#     updated_at: datetime
-
-#     model_config = {"from_attributes": True}
-
-
 
 # ✅ NEW
 class ProductImageSchema(BaseModel):
@@ -145,6 +104,7 @@ class ProductCreateSchema(BaseModel):
     original_price: Optional[float] = Field(None, examples=[500.0])
     discount_percentage: Optional[float] = Field(0.0, examples=[10.0])
     stock: int = Field(..., examples=[100])
+
 
     # ✅ keep old one (optional)
     image_url: Optional[str] = Field(None, examples=["http://example.com/image.png"])

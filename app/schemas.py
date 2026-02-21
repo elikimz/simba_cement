@@ -129,9 +129,11 @@ class SellerNestedSchema(BaseModel):
 class ProductImageSchema(BaseModel):
     id: int
     url: str
-    is_primary: bool = False
-    sort_order: int = 0
-    created_at: datetime
+
+    # allow NULLs coming from DB
+    is_primary: Optional[bool] = False
+    sort_order: Optional[int] = 0
+    created_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
 

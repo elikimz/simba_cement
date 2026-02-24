@@ -268,3 +268,89 @@ class AddressResponseSchema(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+
+
+# app/schemas/deals.py
+from datetime import datetime
+from typing import List, Optional
+from pydantic import BaseModel, Field, validator
+
+
+# -----------------------------
+# DealItem (input)
+# -----------------------------
+class DealItemCreateSchema(BaseModel):
+    product_id: int
+    deal_price: Optional[float] = None
+    discount_percentage: Optional[float] = None
+    sort_order: int = 0
+
+    @validator("discount_percentage")
+    def validate_discount(cls, v):
+        if v is None:
+            return v
+        if not (0 <= v <= 100):
+            raise ValueError("discount_percentage must be between 0 and 100")
+        return v
+
+    @validator("deal_price")
+    def validate_price(cls, v):
+        if v is None:
+            return v
+        if v < 0:
+            raise ValueError("deal_price must be >= 0")
+        return v
+
+
+class DealCreateSchema(BaseModel):
+    title: str = Field(..., max_length=200)
+    description: Optional[str] = None
+    starts_at: Optional[datetime] = None
+    ends_at: Optional[datetime] = None
+    is_active: bool = True
+    items: List[DealItemCreateSchema] = []
+
+
+class DealUpdateSchema(BaseModel):
+    title: Optional[str] = Field(None, max_length=200)
+    description: Optional[str] = None
+    starts_at: Optional[datetime] = None
+    ends_at: Optional[datetime] = None
+    is_active: Optional[bool] = None
+    items: Optional[List[DealItemCreateSchema]] = None
+
+
+# -----------------------------
+# Output schemas
+# -----------------------------
+class DealProductOutSchema(BaseModel):
+    id: int
+    name: str
+    price: float
+    stock: int
+    image_url: Optional[str] = None
+
+    # deal overrides
+    deal_price: Optional[float] = None
+    discount_percentage: Optional[float] = None
+    sort_order: int = 0
+
+    class Config:
+        from_attributes = True
+
+
+class DealResponseSchema(BaseModel):
+    id: int
+    title: str
+    description: Optional[str] = None
+    starts_at: Optional[datetime] = None
+    ends_at: Optional[datetime] = None
+    is_active: bool
+    created_at: datetime
+
+    products: List[DealProductOutSchema]
+
+    class Config:
+        from_attributes = True

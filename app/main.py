@@ -1,7 +1,7 @@
 from sched import scheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import users, settings,categories,products,cart,order,address
+from app.routers import users, settings,categories,products,cart,order,address,deals
 
 app = FastAPI()
 
@@ -26,7 +26,7 @@ app.include_router(products.router)
 app.include_router(cart.router)
 app.include_router(order.router)
 app.include_router(address.router)
-
+app.include_router(deals.router)
 
 
 

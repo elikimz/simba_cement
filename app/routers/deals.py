@@ -1,6 +1,6 @@
 # app/routers/deals.py
 from typing import List
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,29 +16,37 @@ from app.core.dependencies import admin_required
 router = APIRouter(prefix="/deals", tags=["Deals"])
 
 
-def _naive_utc(dt: datetime | None) -> datetime | None:
+# =========================================================
+# TIME HELPERS (NAIROBI)
+# =========================================================
+NAIROBI_TZ = timezone(timedelta(hours=3))
+
+
+def _naive_nairobi(dt: datetime | None) -> datetime | None:
     """
-    Convert timezone-aware datetimes to naive UTC (timestamp without tz).
-    If already naive, keep it.
+    Store datetimes as TIMESTAMP WITHOUT TIME ZONE representing Nairobi local time.
+    - If aware -> convert to Nairobi time then drop tzinfo.
+    - If naive -> assume it is already Nairobi local time.
     """
     if dt is None:
         return None
     if dt.tzinfo is not None:
-        return dt.astimezone(timezone.utc).replace(tzinfo=None)
+        return dt.astimezone(NAIROBI_TZ).replace(tzinfo=None)
     return dt
 
 
-def _utcnow_naive() -> datetime:
-    # naive UTC to match TIMESTAMP WITHOUT TIME ZONE columns
-    return datetime.utcnow()
+def _now_naive_nairobi() -> datetime:
+    """Naive Nairobi now (matches TIMESTAMP WITHOUT TIME ZONE stored as Nairobi local time)."""
+    return datetime.now(NAIROBI_TZ).replace(tzinfo=None)
 
 
+# =========================================================
+# DB HELPERS
+# =========================================================
 async def _reload_deal(db: AsyncSession, deal_id: int) -> Deal:
     result = await db.execute(
         select(Deal)
-        .options(
-            selectinload(Deal.items).selectinload(DealItem.product),
-        )
+        .options(selectinload(Deal.items).selectinload(DealItem.product))
         .where(Deal.id == deal_id)
     )
     return result.scalar_one()
@@ -75,6 +83,10 @@ def _deal_to_response(deal: Deal) -> DealResponseSchema:
     )
 
 
+# =========================================================
+# ROUTES
+# =========================================================
+
 # -----------------------------
 # CREATE DEAL (ADMIN ONLY)
 # -----------------------------
@@ -84,8 +96,8 @@ async def create_deal(
     db: AsyncSession = Depends(get_async_db),
     admin: User = Depends(admin_required),
 ):
-    starts_at = _naive_utc(data.starts_at)
-    ends_at = _naive_utc(data.ends_at)
+    starts_at = _naive_nairobi(data.starts_at)
+    ends_at = _naive_nairobi(data.ends_at)
 
     if starts_at and ends_at and ends_at < starts_at:
         raise HTTPException(status_code=400, detail="ends_at must be after starts_at")
@@ -145,7 +157,8 @@ async def list_deals(db: AsyncSession = Depends(get_async_db)):
 # -----------------------------
 @router.get("/latest", response_model=DealResponseSchema)
 async def latest_deal(db: AsyncSession = Depends(get_async_db)):
-    now = _utcnow_naive()
+    # ✅ Nairobi time comparison (naive values represent Nairobi time)
+    now = _now_naive_nairobi()
 
     result = await db.execute(
         select(Deal)
@@ -202,9 +215,9 @@ async def update_deal(
     if data.description is not None:
         deal.description = data.description
     if data.starts_at is not None:
-        deal.starts_at = _naive_utc(data.starts_at)
+        deal.starts_at = _naive_nairobi(data.starts_at)
     if data.ends_at is not None:
-        deal.ends_at = _naive_utc(data.ends_at)
+        deal.ends_at = _naive_nairobi(data.ends_at)
     if data.is_active is not None:
         deal.is_active = data.is_active
 

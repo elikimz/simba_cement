@@ -166,3 +166,38 @@ async def admin_update_order_status(
     order.status = new_status
     await db.commit()
     return {"message": f"Order status updated to '{new_status}'"}
+
+
+
+# =========================
+# ADMIN: get all orders
+# =========================
+@router.get("/admin/all", response_model=list[OrderResponseSchema])
+async def admin_list_all_orders(
+    status: str | None = None,  # optional query param ?status=PENDING
+    db: AsyncSession = Depends(get_async_db),
+    _: User = Depends(admin_required),
+):
+    q = (
+        select(Order)
+        .options(
+            selectinload(Order.items),
+            selectinload(Order.buyer),
+            selectinload(Order.address),
+        )
+        .order_by(Order.created_at.desc())
+    )
+
+    if status:
+        allowed = {
+            OrderStatus.PENDING,
+            OrderStatus.SHIPPED,
+            OrderStatus.DELIVERED,
+            OrderStatus.CANCELLED,
+        }
+        if status not in allowed:
+            raise HTTPException(status_code=400, detail="Invalid status")
+        q = q.where(Order.status == status)
+
+    result = await db.execute(q)
+    return result.scalars().all()

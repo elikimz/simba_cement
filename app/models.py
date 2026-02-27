@@ -38,18 +38,7 @@ class User(Base):
     cart = relationship("Cart", back_populates="user", uselist=False, cascade="all, delete-orphan")
     addresses = relationship("Address", back_populates="user", cascade="all, delete-orphan")
 
-    sent_messages = relationship(
-        "Contact",
-        foreign_keys="Contact.sender_id",
-        back_populates="sender",
-        cascade="all, delete-orphan"
-    )
-    received_messages = relationship(
-        "Contact",
-        foreign_keys="Contact.recipient_id",
-        back_populates="recipient",
-        cascade="all, delete-orphan"
-    )
+    
 
 
 # =========================================================
@@ -268,23 +257,21 @@ class OrderItem(Base):
 # =========================================================
 # CONTACT / MESSAGES
 # =========================================================
+# app/models.py  (only the Contact part)
+
 class Contact(Base):
     __tablename__ = "contacts"
 
     id = Column(Integer, primary_key=True, index=True)
-    sender_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    recipient_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
-    subject = Column(String(200), nullable=False)
+    name = Column(String(120), nullable=True)
+    email = Column(String(120), nullable=True)
+    phone = Column(String(30), nullable=True)
+
     message = Column(Text, nullable=False)
+
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    reply_to = Column(Integer, ForeignKey("contacts.id", ondelete="SET NULL"), nullable=True)
-
-    sender = relationship("User", foreign_keys=[sender_id], back_populates="sent_messages")
-    recipient = relationship("User", foreign_keys=[recipient_id], back_populates="received_messages")
-
-
 
 # =========================================================
 # HERO BANNERS (NEW)

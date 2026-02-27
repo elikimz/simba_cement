@@ -497,3 +497,33 @@ class OrderResponseSchema(BaseModel):
 
     class Config:
         from_attributes = True        
+
+
+
+
+
+# app/schemas/contact.py
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+from datetime import datetime
+
+class ContactCreateSchema(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+    message: str
+
+class ContactResponseSchema(BaseModel):
+    id: int
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+    message: str
+    is_read: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class ContactMarkReadSchema(BaseModel):
+    is_read: bool

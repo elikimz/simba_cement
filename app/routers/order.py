@@ -169,12 +169,13 @@ async def admin_update_order_status(
 
 
 
+
 # =========================
 # ADMIN: get all orders
 # =========================
 @router.get("/admin/all", response_model=list[OrderResponseSchema])
 async def admin_list_all_orders(
-    status: str | None = None,  # optional query param ?status=PENDING
+    status: str | None = None,  # optional: ?status=pending
     db: AsyncSession = Depends(get_async_db),
     _: User = Depends(admin_required),
 ):
@@ -189,6 +190,7 @@ async def admin_list_all_orders(
     )
 
     if status:
+        status = status.strip().lower()  # ✅ accept PENDING / pending
         allowed = {
             OrderStatus.PENDING,
             OrderStatus.SHIPPED,

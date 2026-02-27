@@ -427,3 +427,73 @@ class HeroBannerResponseSchema(HeroBannerBase):
 
     class Config:
         from_attributes = True    
+
+
+
+
+# app/schemas.py
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import datetime
+
+
+# -------- User (public) --------
+class UserPublicSchema(BaseModel):
+    id: int
+    name: str
+    email: str
+    phone: Optional[str] = None
+    role: str
+
+    class Config:
+        from_attributes = True  # pydantic v2 (use orm_mode=True in v1)
+
+
+# -------- Address --------
+class AddressResponseSchema(BaseModel):
+    id: int
+    user_id: int
+    full_name: str
+    phone: str
+    county: str
+    town: str
+    street: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# -------- Order Items --------
+class OrderItemResponseSchema(BaseModel):
+    id: int
+    product_id: int
+    product_name: str
+    price_at_purchase: float
+    quantity: int
+
+    class Config:
+        from_attributes = True
+
+
+# -------- Order Response --------
+class OrderResponseSchema(BaseModel):
+    id: int
+    buyer_id: int
+    status: str
+    subtotal: float
+    shipping_fee: float
+    total_amount: float
+    notes: Optional[str] = None
+
+    address_id: Optional[int] = None
+    address: Optional[AddressResponseSchema] = None   # ✅ include address details
+
+    buyer: Optional[UserPublicSchema] = None         # ✅ include user details
+    items: List[OrderItemResponseSchema] = []
+
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True        

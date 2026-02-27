@@ -354,3 +354,71 @@ class DealResponseSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+
+
+class ChangePasswordSchema(BaseModel):
+    old_password: str
+    new_password: str        
+
+
+
+
+
+# -------------------------
+# Images
+# -------------------------
+class HeroBannerImageBase(BaseModel):
+    url: str
+    sort_order: int = 0
+    is_primary: bool = False
+
+class HeroBannerImageCreateSchema(HeroBannerImageBase):
+    pass
+
+class HeroBannerImageResponseSchema(HeroBannerImageBase):
+    id: int
+    banner_id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# -------------------------
+# Banner
+# -------------------------
+class HeroBannerBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    cta_text: str = "Shop Now"
+    cta_href: Optional[str] = "/products"
+
+    starts_at: Optional[datetime] = None
+    ends_at: Optional[datetime] = None
+    is_active: bool = True
+    sort_order: int = 0
+
+class HeroBannerCreateSchema(HeroBannerBase):
+    images: List[HeroBannerImageCreateSchema] = Field(default_factory=list)
+
+class HeroBannerUpdateSchema(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    cta_text: Optional[str] = None
+    cta_href: Optional[str] = None
+
+    starts_at: Optional[datetime] = None
+    ends_at: Optional[datetime] = None
+    is_active: Optional[bool] = None
+    sort_order: Optional[int] = None
+
+class HeroBannerResponseSchema(HeroBannerBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    images: List[HeroBannerImageResponseSchema] = Field(default_factory=list)
+
+    class Config:
+        from_attributes = True    

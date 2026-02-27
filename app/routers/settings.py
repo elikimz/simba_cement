@@ -1,47 +1,178 @@
+# import random
+# from datetime import datetime, timedelta
+# from fastapi import APIRouter, Depends, HTTPException, status
+# from sqlalchemy.ext.asyncio import AsyncSession
+# from sqlalchemy.future import select
+# from app.core.security import hash_password
+# from app.models import User
+# from app.database import get_async_db
+# from app.core.jwt import create_access_token, decode_access_token
+# from app.core.gmail import send_reset_code
+# from app.routers.users import validate_password
+# from app.schemas import ForgotPasswordSchema, ResetPasswordSchema
+
+# router = APIRouter(prefix="/settings", tags=["Settings"])
+
+# # -----------------------------
+# # FORGOT PASSWORD
+# # -----------------------------
+# @router.post("/forgot-password")
+# async def forgot_password(data: ForgotPasswordSchema, db: AsyncSession = Depends(get_async_db)):
+
+#     # Find user by email
+#     result = await db.execute(select(User).where(User.email == data.email))
+#     user = result.scalar_one_or_none()
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+
+#     # Generate 6-digit numeric code
+#     code = f"{random.randint(100000, 999999)}"
+
+#     # Encode code into JWT valid 15 mins
+#     token_data = {
+#         "user_id": user.id,
+#         "code": code,
+#         "exp": datetime.utcnow() + timedelta(minutes=15)
+#     }
+#     reset_token = create_access_token(token_data)
+
+#     # Send code via email
+#     await send_reset_code(user.email, code)
+
+#     return {
+#         "message": "Password reset code sent to your email.",
+#         "reset_token": reset_token  # user needs this token to reset password
+#     }
+
+
+# # -----------------------------
+# # RESET PASSWORD
+# # -----------------------------
+# @router.post("/reset-password")
+# async def reset_password(data: ResetPasswordSchema, db: AsyncSession = Depends(get_async_db)):
+
+#     # Decode the reset token sent by user
+#     try:
+#         payload = decode_access_token(data.reset_token)
+#         user_id = payload.get("user_id")
+#         code_in_token = payload.get("code")
+#     except Exception:
+#         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+
+#     # Check if code matches
+#     if code_in_token != data.code:
+#         raise HTTPException(status_code=400, detail="Invalid reset code")
+
+#     # Get the user
+#     result = await db.execute(select(User).where(User.id == user_id))
+#     user = result.scalar_one_or_none()
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+
+#     # Validate new password
+#     validate_password(data.new_password)
+
+#     # Update password
+#     user.password_hash = hash_password(data.new_password)
+#     db.add(user)
+#     await db.commit()
+
+#     return {"message": "Password has been reset successfully"}
+
+
+
+
+# app/routers/settings.py
 import random
 from datetime import datetime, timedelta
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.core.security import hash_password
+
+from app.core.security import hash_password, verify_password
 from app.models import User
 from app.database import get_async_db
 from app.core.jwt import create_access_token, decode_access_token
 from app.core.gmail import send_reset_code
 from app.routers.users import validate_password
-from app.schemas import ForgotPasswordSchema, ResetPasswordSchema
+from app.schemas import (
+    ForgotPasswordSchema,
+    ResetPasswordSchema,
+    ChangePasswordSchema,  # ✅ add this schema
+)
+from app.core.dependencies import get_current_user  # ✅ you must have this
 
 router = APIRouter(prefix="/settings", tags=["Settings"])
+
+
+# -----------------------------
+# CHANGE PASSWORD (LOGGED-IN USER)
+# -----------------------------
+@router.post("/change-password", status_code=status.HTTP_200_OK)
+async def change_password(
+    data: ChangePasswordSchema,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    User must be logged in (Bearer token).
+    Requires old_password + new_password.
+    """
+
+    # re-load user (safe)
+    result = await db.execute(select(User).where(User.id == current_user.id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # verify old password
+    if not user.password_hash or not verify_password(data.old_password, user.password_hash):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+
+    # validate new password
+    validate_password(data.new_password)
+
+    # block reuse (optional but good)
+    if verify_password(data.new_password, user.password_hash):
+        raise HTTPException(status_code=400, detail="New password cannot be the same as old password")
+
+    # update password
+    user.password_hash = hash_password(data.new_password)
+    db.add(user)
+    await db.commit()
+
+    return {"message": "Password changed successfully"}
+
 
 # -----------------------------
 # FORGOT PASSWORD
 # -----------------------------
 @router.post("/forgot-password")
-async def forgot_password(data: ForgotPasswordSchema, db: AsyncSession = Depends(get_async_db)):
-
-    # Find user by email
+async def forgot_password(
+    data: ForgotPasswordSchema,
+    db: AsyncSession = Depends(get_async_db),
+):
     result = await db.execute(select(User).where(User.email == data.email))
     user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Generate 6-digit numeric code
     code = f"{random.randint(100000, 999999)}"
 
-    # Encode code into JWT valid 15 mins
     token_data = {
         "user_id": user.id,
         "code": code,
-        "exp": datetime.utcnow() + timedelta(minutes=15)
+        "exp": datetime.utcnow() + timedelta(minutes=15),
     }
     reset_token = create_access_token(token_data)
 
-    # Send code via email
     await send_reset_code(user.email, code)
 
     return {
         "message": "Password reset code sent to your email.",
-        "reset_token": reset_token  # user needs this token to reset password
+        "reset_token": reset_token,
     }
 
 
@@ -49,9 +180,10 @@ async def forgot_password(data: ForgotPasswordSchema, db: AsyncSession = Depends
 # RESET PASSWORD
 # -----------------------------
 @router.post("/reset-password")
-async def reset_password(data: ResetPasswordSchema, db: AsyncSession = Depends(get_async_db)):
-
-    # Decode the reset token sent by user
+async def reset_password(
+    data: ResetPasswordSchema,
+    db: AsyncSession = Depends(get_async_db),
+):
     try:
         payload = decode_access_token(data.reset_token)
         user_id = payload.get("user_id")
@@ -59,20 +191,16 @@ async def reset_password(data: ResetPasswordSchema, db: AsyncSession = Depends(g
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
 
-    # Check if code matches
     if code_in_token != data.code:
         raise HTTPException(status_code=400, detail="Invalid reset code")
 
-    # Get the user
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Validate new password
     validate_password(data.new_password)
 
-    # Update password
     user.password_hash = hash_password(data.new_password)
     db.add(user)
     await db.commit()

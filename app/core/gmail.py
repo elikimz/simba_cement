@@ -5,9 +5,9 @@ from pydantic import EmailStr
 # SMTP Configuration (Pydantic v2 / FastAPI-Mail v2)
 # -----------------------------
 conf = ConnectionConfig(
-    MAIL_USERNAME="elijahkimani1293@gmail.com",
+    MAIL_USERNAME="simbacement775@gmail.com",
     MAIL_PASSWORD="msuo okfc qujw rzt",
-    MAIL_FROM="elijahkimani1293@gmail.com",
+    MAIL_FROM="info@simbacementwholesalesdistributor.co.ke",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",  # e.g., smtp.gmail.com
     MAIL_STARTTLS=True,              # Use STARTTLS

@@ -6,7 +6,7 @@ from pydantic import EmailStr
 # -----------------------------
 conf = ConnectionConfig(
     MAIL_USERNAME="elijahkimani1293@gmail.com",
-    MAIL_PASSWORD="uqgg ziiy vfti gnww",
+    MAIL_PASSWORD="msuo okfc qujw rzt",
     MAIL_FROM="elijahkimani1293@gmail.com",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",  # e.g., smtp.gmail.com

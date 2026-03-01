@@ -106,6 +106,7 @@ class ProductCreateSchema(BaseModel):
     name: str = Field(..., examples=["Cement 50kg"])
     description: Optional[str] = Field(None, examples=["High quality cement"])
     price: float = Field(..., examples=[450.0])
+    max_price: Optional[float] = None 
     original_price: Optional[float] = Field(None, examples=[500.0])
     discount_percentage: Optional[float] = Field(0.0, examples=[10.0])
     stock: int = Field(..., examples=[100])
@@ -127,6 +128,7 @@ class ProductUpdateSchema(BaseModel):
     name: Optional[str] = Field(None, examples=["Cement 50kg"])
     description: Optional[str] = Field(None, examples=["High quality cement"])
     price: Optional[float] = Field(None, examples=[450.0])
+    max_price: Optional[float] = None 
     original_price: Optional[float] = Field(None, examples=[500.0])
     discount_percentage: Optional[float] = Field(None, examples=[10.0])
     stock: Optional[int] = Field(None, examples=[100])
@@ -148,6 +150,7 @@ class ProductResponseSchema(BaseModel):
     name: str
     description: Optional[str] = None
     price: float
+    max_price: Optional[float] = None 
     original_price: Optional[float] = None
     discount_percentage: float
     stock: int

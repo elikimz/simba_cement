@@ -85,6 +85,8 @@ class Product(Base):
     description = Column(Text, nullable=True)
 
     price = Column(Float, nullable=False)
+     # ✅ Add max_price (optional)
+    max_price = Column(Float, nullable=True)
     original_price = Column(Float, nullable=True)
     discount_percentage = Column(Float, default=0.0)
 

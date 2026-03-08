@@ -11,8 +11,8 @@ from app.database import Base
 # ENUMS
 # =========================================================
 class UserRole(str, PyEnum):
-    ADMIN = "admin"
-    USER = "user"
+    ADMIN = "ADMIN"
+    USER = "USER"
 
 class OrderStatus(str, PyEnum):
     PENDING = "pending"

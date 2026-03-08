@@ -1,7 +1,8 @@
-from sched import scheduler
+from app.config import settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import users, settings,categories,products,cart,order,address,deals,banners,contacts
+from app.routers import users, categories,products,cart,order,address,deals,banners,contacts
+from app.routers import settings as settings_router
 
 app = FastAPI()
 
@@ -10,7 +11,7 @@ app = FastAPI()
 # ----------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ⚠️ only for testing!
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -20,7 +21,7 @@ app.add_middleware(
 # Include Routers
 # ----------------------------
 app.include_router(users.router)
-app.include_router(settings.router)
+app.include_router(settings_router.router)
 app.include_router(categories.router)
 app.include_router(products.router)
 app.include_router(cart.router)

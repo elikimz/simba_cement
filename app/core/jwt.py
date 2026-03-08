@@ -1,17 +1,15 @@
 import os
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from dotenv import load_dotenv
+from app.config import settings
 
-load_dotenv()
-
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 1440))
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.JWT_ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 # 🚨 crash app if secret missing
 if not SECRET_KEY:
-    raise ValueError("SECRET_KEY is not set in .env")
+    raise ValueError("SECRET_KEY is not set in .env or config.py")
 
 
 # ---------------------------------------------------

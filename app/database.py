@@ -1,15 +1,11 @@
 import ssl
-import os
-from dotenv import load_dotenv
+from app.config import settings
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Load environment variables
-load_dotenv()
-
-# Get DB URL
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = settings.DATABASE_URL
 assert DATABASE_URL is not None, "❌ DATABASE_URL not loaded from .env"
 
 # --- SSL Context (optional for cloud DBs like Supabase or PlanetScale) ---

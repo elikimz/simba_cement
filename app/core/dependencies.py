@@ -20,6 +20,7 @@ async def get_current_user(
         )
 
     user_id = payload.get("user_id")
+    user_role = payload.get("user_role")
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if user is None:
@@ -28,6 +29,7 @@ async def get_current_user(
             detail="User not found"
         )
 
+    user.role = user_role # Set the role from the token
     return user
 
 

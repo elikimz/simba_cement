@@ -10,6 +10,10 @@ from app.database import Base
 # =========================================================
 # ENUMS
 # =========================================================
+class UserRole(str, PyEnum):
+    ADMIN = "admin"
+    USER = "user"
+
 class OrderStatus(str, PyEnum):
     PENDING = "pending"
     SHIPPED = "shipped"
@@ -27,7 +31,7 @@ class User(Base):
     name = Column(String(100), nullable=False, index=True)
     email = Column(String(100), unique=True, nullable=False, index=True)
     phone = Column(String(20), unique=True, nullable=True)
-    role = Column(String(20), nullable=False, default="user")
+    role = Column(Enum(UserRole, name="user_role"), nullable=False, default=UserRole.USER)
     password_hash = Column(String(255), nullable=True)
 
     # Relationships

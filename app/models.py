@@ -1,18 +1,16 @@
-
-
-# app/models.py
+from enum import Enum as PyEnum
+from datetime import datetime
 from sqlalchemy import (
     Boolean, Column, Integer, String, Float, ForeignKey, DateTime, Text, Enum
 )
 from sqlalchemy.orm import relationship
 from app.database import Base
-from datetime import datetime
 
 
 # =========================================================
 # ENUMS
 # =========================================================
-class OrderStatus:
+class OrderStatus(str, PyEnum):
     PENDING = "pending"
     SHIPPED = "shipped"
     DELIVERED = "delivered"
@@ -37,8 +35,6 @@ class User(Base):
     orders = relationship("Order", back_populates="buyer", cascade="all, delete-orphan")
     cart = relationship("Cart", back_populates="user", uselist=False, cascade="all, delete-orphan")
     addresses = relationship("Address", back_populates="user", cascade="all, delete-orphan")
-
-    
 
 
 # =========================================================
@@ -85,7 +81,6 @@ class Product(Base):
     description = Column(Text, nullable=True)
 
     price = Column(Float, nullable=False)
-     # ✅ Add max_price (optional)
     max_price = Column(Float, nullable=True)
     original_price = Column(Float, nullable=True)
     discount_percentage = Column(Float, default=0.0)
@@ -215,14 +210,9 @@ class Order(Base):
     address_id = Column(Integer, ForeignKey("addresses.id", ondelete="SET NULL"), nullable=True)
 
     status = Column(
-        Enum(
-            OrderStatus.PENDING,
-            OrderStatus.SHIPPED,
-            OrderStatus.DELIVERED,
-            OrderStatus.CANCELLED,
-            name="order_status"
-        ),
-        default=OrderStatus.PENDING, index=True
+        Enum(OrderStatus, name="order_status"),
+        default=OrderStatus.PENDING,
+        index=True
     )
 
     subtotal = Column(Float, nullable=False)
@@ -259,8 +249,6 @@ class OrderItem(Base):
 # =========================================================
 # CONTACT / MESSAGES
 # =========================================================
-# app/models.py  (only the Contact part)
-
 class Contact(Base):
     __tablename__ = "contacts"
 
@@ -274,6 +262,7 @@ class Contact(Base):
 
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
 
 # =========================================================
 # HERO BANNERS (NEW)
@@ -328,4 +317,4 @@ class HeroBannerImage(Base):
 
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    banner = relationship("HeroBanner", back_populates="images")    
+    banner = relationship("HeroBanner", back_populates="images")

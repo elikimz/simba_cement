@@ -1,7 +1,7 @@
 from app.config import settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import users, categories,products,cart,order,address,deals,banners,contacts
+from app.routers import users, categories,products,cart,order,address,deals,banners,contacts, sitemap
 from app.routers import settings as settings_router
 
 app = FastAPI()
@@ -30,6 +30,7 @@ app.include_router(address.router)
 app.include_router(deals.router)
 app.include_router(banners.router)
 app.include_router(contacts.router)
+app.include_router(sitemap.router)
 
 
 

@@ -1,0 +1,110 @@
+nohup: ignoring input
+INFO:     Started server process [5381]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-03-08 16:54:16,010 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-03-08 16:54:16,011 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-08 16:54:16,264 INFO sqlalchemy.engine.Engine select current_schema()
+2026-03-08 16:54:16,264 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-08 16:54:16,602 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-03-08 16:54:16,602 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-08 16:54:16,856 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-08 16:54:16,860 INFO sqlalchemy.engine.Engine SELECT products.id, products.name, products.description, products.price, products.max_price, products.original_price, products.discount_percentage, products.stock, products.image_url, products.seller_id, products.category_id, products.created_at, products.updated_at 
+FROM products
+2026-03-08 16:54:16,860 INFO sqlalchemy.engine.Engine [generated in 0.00018s] ()
+2026-03-08 16:54:17,157 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.name AS users_name, users.email AS users_email, users.phone AS users_phone, users.role AS users_role, users.password_hash AS users_password_hash 
+FROM users 
+WHERE users.id IN ($1::INTEGER)
+2026-03-08 16:54:17,157 INFO sqlalchemy.engine.Engine [generated in 0.00027s] (17,)
+2026-03-08 16:54:17,329 INFO sqlalchemy.engine.Engine SELECT product_images.product_id AS product_images_product_id, product_images.id AS product_images_id, product_images.url AS product_images_url, product_images.is_primary AS product_images_is_primary, product_images.sort_order AS product_images_sort_order, product_images.created_at AS product_images_created_at 
+FROM product_images 
+WHERE product_images.product_id IN ($1::INTEGER, $2::INTEGER, $3::INTEGER, $4::INTEGER, $5::INTEGER, $6::INTEGER, $7::INTEGER, $8::INTEGER, $9::INTEGER, $10::INTEGER, $11::INTEGER, $12::INTEGER, $13::INTEGER, $14::INTEGER, $15::INTEGER, $16::INTEGER, $17::INTEGER, $18::INTEGER, $19::INTEGER, $20::INTEGER, $21::INTEGER, $22::INTEGER, $23::INTEGER, $24::INTEGER, $25::INTEGER, $26::INTEGER) ORDER BY product_images.sort_order
+2026-03-08 16:54:17,330 INFO sqlalchemy.engine.Engine [generated in 0.00044s] (14, 16, 17, 11, 18, 10, 13, 12, 9, 19, 20, 21, 22, 15, 34, 23, 25, 24, 26, 27, 28, 29, 32, 33, 30, 31)
+2026-03-08 16:54:17,555 INFO sqlalchemy.engine.Engine SELECT categories.id AS categories_id, categories.name AS categories_name, categories.description AS categories_description 
+FROM categories 
+WHERE categories.id IN ($1::INTEGER, $2::INTEGER, $3::INTEGER, $4::INTEGER)
+2026-03-08 16:54:17,555 INFO sqlalchemy.engine.Engine [generated in 0.00029s] (3, 6, 9, 12)
+INFO:     127.0.0.1:52542 - "GET /products/ HTTP/1.1" 200 OK
+2026-03-08 16:54:17,733 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-08 16:54:21,689 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-08 16:54:21,690 INFO sqlalchemy.engine.Engine SELECT categories.id, categories.name, categories.description 
+FROM categories
+2026-03-08 16:54:21,690 INFO sqlalchemy.engine.Engine [generated in 0.00016s] ()
+INFO:     127.0.0.1:46254 - "GET /categories/ HTTP/1.1" 200 OK
+2026-03-08 16:54:21,945 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-08 16:54:28,076 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-08 16:54:28,077 INFO sqlalchemy.engine.Engine SELECT users.id, users.name, users.email, users.phone, users.role, users.password_hash 
+FROM users 
+WHERE users.email = $1::VARCHAR
+2026-03-08 16:54:28,077 INFO sqlalchemy.engine.Engine [generated in 0.00014s] ('test@example.com',)
+2026-03-08 16:54:28,339 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:46258 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+2026-03-08 16:55:06,854 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-08 16:55:06,854 INFO sqlalchemy.engine.Engine SELECT products.id, products.name, products.description, products.price, products.max_price, products.original_price, products.discount_percentage, products.stock, products.image_url, products.seller_id, products.category_id, products.created_at, products.updated_at 
+FROM products
+2026-03-08 16:55:06,854 INFO sqlalchemy.engine.Engine [cached since 49.99s ago] ()
+2026-03-08 16:55:07,084 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.name AS users_name, users.email AS users_email, users.phone AS users_phone, users.role AS users_role, users.password_hash AS users_password_hash 
+FROM users 
+WHERE users.id IN ($1::INTEGER)
+2026-03-08 16:55:07,084 INFO sqlalchemy.engine.Engine [cached since 49.93s ago] (17,)
+2026-03-08 16:55:07,170 INFO sqlalchemy.engine.Engine SELECT product_images.product_id AS product_images_product_id, product_images.id AS product_images_id, product_images.url AS product_images_url, product_images.is_primary AS product_images_is_primary, product_images.sort_order AS product_images_sort_order, product_images.created_at AS product_images_created_at 
+FROM product_images 
+WHERE product_images.product_id IN ($1::INTEGER, $2::INTEGER, $3::INTEGER, $4::INTEGER, $5::INTEGER, $6::INTEGER, $7::INTEGER, $8::INTEGER, $9::INTEGER, $10::INTEGER, $11::INTEGER, $12::INTEGER, $13::INTEGER, $14::INTEGER, $15::INTEGER, $16::INTEGER, $17::INTEGER, $18::INTEGER, $19::INTEGER, $20::INTEGER, $21::INTEGER, $22::INTEGER, $23::INTEGER, $24::INTEGER, $25::INTEGER, $26::INTEGER) ORDER BY product_images.sort_order
+2026-03-08 16:55:07,170 INFO sqlalchemy.engine.Engine [cached since 49.84s ago] (14, 16, 17, 11, 18, 10, 13, 12, 9, 19, 20, 21, 22, 15, 34, 23, 25, 24, 26, 27, 28, 29, 32, 33, 30, 31)
+2026-03-08 16:55:07,297 INFO sqlalchemy.engine.Engine SELECT categories.id AS categories_id, categories.name AS categories_name, categories.description AS categories_description 
+FROM categories 
+WHERE categories.id IN ($1::INTEGER, $2::INTEGER, $3::INTEGER, $4::INTEGER)
+2026-03-08 16:55:07,298 INFO sqlalchemy.engine.Engine [cached since 49.74s ago] (3, 6, 9, 12)
+INFO:     127.0.0.1:51202 - "GET /products/ HTTP/1.1" 200 OK
+2026-03-08 16:55:07,384 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-08 16:55:07,735 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-08 16:55:07,737 INFO sqlalchemy.engine.Engine SELECT hero_banners.id, hero_banners.title, hero_banners.description, hero_banners.cta_text, hero_banners.cta_href, hero_banners.starts_at, hero_banners.ends_at, hero_banners.is_active, hero_banners.sort_order, hero_banners.created_at, hero_banners.updated_at 
+FROM hero_banners 
+WHERE hero_banners.is_active = true AND (hero_banners.starts_at IS NULL OR hero_banners.starts_at <= $1::TIMESTAMP WITHOUT TIME ZONE) AND (hero_banners.ends_at IS NULL OR hero_banners.ends_at >= $2::TIMESTAMP WITHOUT TIME ZONE) ORDER BY hero_banners.sort_order ASC, hero_banners.id DESC
+2026-03-08 16:55:07,737 INFO sqlalchemy.engine.Engine [generated in 0.00019s] (datetime.datetime(2026, 3, 8, 20, 55, 6, 856618), datetime.datetime(2026, 3, 8, 20, 55, 6, 856618))
+2026-03-08 16:55:07,766 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-08 16:55:07,768 INFO sqlalchemy.engine.Engine SELECT deals.id, deals.title, deals.description, deals.starts_at, deals.ends_at, deals.is_active, deals.created_at 
+FROM deals 
+WHERE deals.is_active = true AND (deals.starts_at IS NULL OR deals.starts_at <= $1::TIMESTAMP WITHOUT TIME ZONE) AND (deals.ends_at IS NULL OR deals.ends_at >= $2::TIMESTAMP WITHOUT TIME ZONE) ORDER BY deals.created_at DESC 
+ LIMIT $3::INTEGER
+2026-03-08 16:55:07,768 INFO sqlalchemy.engine.Engine [generated in 0.00017s] (datetime.datetime(2026, 3, 8, 23, 55, 6, 858443), datetime.datetime(2026, 3, 8, 23, 55, 6, 858443), 1)
+2026-03-08 16:55:08,093 INFO sqlalchemy.engine.Engine SELECT hero_banner_images.banner_id AS hero_banner_images_banner_id, hero_banner_images.id AS hero_banner_images_id, hero_banner_images.url AS hero_banner_images_url, hero_banner_images.sort_order AS hero_banner_images_sort_order, hero_banner_images.is_primary AS hero_banner_images_is_primary, hero_banner_images.created_at AS hero_banner_images_created_at 
+FROM hero_banner_images 
+WHERE hero_banner_images.banner_id IN ($1::INTEGER) ORDER BY hero_banner_images.sort_order
+2026-03-08 16:55:08,093 INFO sqlalchemy.engine.Engine [generated in 0.00030s] (2,)
+2026-03-08 16:55:08,125 INFO sqlalchemy.engine.Engine SELECT deal_items.deal_id AS deal_items_deal_id, deal_items.id AS deal_items_id, deal_items.product_id AS deal_items_product_id, deal_items.deal_price AS deal_items_deal_price, deal_items.discount_percentage AS deal_items_discount_percentage, deal_items.sort_order AS deal_items_sort_order, deal_items.created_at AS deal_items_created_at 
+FROM deal_items 
+WHERE deal_items.deal_id IN ($1::INTEGER) ORDER BY deal_items.sort_order
+2026-03-08 16:55:08,125 INFO sqlalchemy.engine.Engine [generated in 0.00026s] (2,)
+INFO:     127.0.0.1:51216 - "GET /deals/latest HTTP/1.1" 200 OK
+2026-03-08 16:55:08,359 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:51206 - "GET /hero-banners/ HTTP/1.1" 200 OK
+2026-03-08 16:55:08,419 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-08 16:55:15,713 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-08 16:55:15,714 INFO sqlalchemy.engine.Engine SELECT products.id, products.name, products.description, products.price, products.max_price, products.original_price, products.discount_percentage, products.stock, products.image_url, products.seller_id, products.category_id, products.created_at, products.updated_at 
+FROM products 
+WHERE products.id = $1::INTEGER
+2026-03-08 16:55:15,714 INFO sqlalchemy.engine.Engine [generated in 0.00013s] (34,)
+2026-03-08 16:55:15,969 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.name AS users_name, users.email AS users_email, users.phone AS users_phone, users.role AS users_role, users.password_hash AS users_password_hash 
+FROM users 
+WHERE users.id IN ($1::INTEGER)
+2026-03-08 16:55:15,969 INFO sqlalchemy.engine.Engine [cached since 58.81s ago] (17,)
+2026-03-08 16:55:16,054 INFO sqlalchemy.engine.Engine SELECT product_images.product_id AS product_images_product_id, product_images.id AS product_images_id, product_images.url AS product_images_url, product_images.is_primary AS product_images_is_primary, product_images.sort_order AS product_images_sort_order, product_images.created_at AS product_images_created_at 
+FROM product_images 
+WHERE product_images.product_id IN ($1::INTEGER) ORDER BY product_images.sort_order
+2026-03-08 16:55:16,054 INFO sqlalchemy.engine.Engine [cached since 58.73s ago] (34,)
+2026-03-08 16:55:16,224 INFO sqlalchemy.engine.Engine SELECT categories.id AS categories_id, categories.name AS categories_name, categories.description AS categories_description 
+FROM categories 
+WHERE categories.id IN ($1::INTEGER)
+2026-03-08 16:55:16,224 INFO sqlalchemy.engine.Engine [cached since 58.67s ago] (3,)
+INFO:     127.0.0.1:48064 - "GET /products/34 HTTP/1.1" 200 OK
+2026-03-08 16:55:16,394 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5381]
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5331]

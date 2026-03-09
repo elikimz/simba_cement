@@ -342,14 +342,27 @@ async def create_product(
 # GET ALL PRODUCTS (PUBLIC)
 # -----------------------------
 @router.get("/", response_model=List[ProductResponseSchema])
-async def list_products(db: AsyncSession = Depends(get_async_db)):
-    result = await db.execute(
-        select(Product).options(
-            selectinload(Product.category),
-            selectinload(Product.seller),
-            selectinload(Product.images),
-        )
+async def list_products(
+    category_id: Optional[int] = None,
+    search: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 20,
+    db: AsyncSession = Depends(get_async_db)
+):
+    query = select(Product).options(
+        selectinload(Product.category),
+        selectinload(Product.seller),
+        selectinload(Product.images),
     )
+    
+    if category_id:
+        query = query.where(Product.category_id == category_id)
+    if search:
+        query = query.where(Product.name.ilike(f"%{search}%"))
+        
+    query = query.offset(skip).limit(limit).order_by(Product.created_at.desc())
+    
+    result = await db.execute(query)
     return result.scalars().all()
 
 

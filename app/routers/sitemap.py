@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.get("/sitemap.xml", include_in_schema=False)
 async def get_sitemap(db: AsyncSession = Depends(get_async_db)):
-    base_url = "https://simba-cement.com"
+    base_url = "https://www.simbacementwholesalesdistributor.co.ke"
     
     # Static pages
     static_urls = [
